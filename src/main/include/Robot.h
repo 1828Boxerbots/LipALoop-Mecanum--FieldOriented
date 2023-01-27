@@ -9,6 +9,12 @@
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 
+#include <frc/motorcontrol/Victor.h>
+#include <frc/ADIS16470_IMU.h>
+#include <frc/XboxController.h>
+
+#include <frc/smartdashboard/SmartDashboard.h>
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -24,9 +30,20 @@ class Robot : public frc::TimedRobot {
   void SimulationInit() override;
   void SimulationPeriodic() override;
 
+  double MathMax(double a, double b);
+
  private:
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
+
+  frc::Victor m_topLeft{1};
+  frc::Victor m_topRight{0};
+  frc::Victor m_bottomLeft{4};
+  frc::Victor m_bottomRight{3};
+
+  frc::XboxController m_xBox{0};
+
+  frc::ADIS16470_IMU m_imu;
 };

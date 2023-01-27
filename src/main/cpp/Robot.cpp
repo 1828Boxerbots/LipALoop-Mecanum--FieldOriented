@@ -8,6 +8,7 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
+
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -56,9 +57,57 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit()
+{
+  m_topLeft.SetInverted(true);
+  m_bottomLeft.SetInverted(true);
+  m_imu.Reset();
+}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+  double vertical = 0.0;
+  double horizontal = 0.0;
+  double pivot = 0.0;
+
+  vertical = -m_xBox.GetLeftY() * 0.1;
+  horizontal = m_xBox.GetLeftX() * 0.1;
+  pivot = m_xBox.GetRightX() * 0.1;
+
+  double theta = atan2(vertical, horizontal) - ((double)m_imu.GetAngle() * (M_PI / 180.0));
+  frc::SmartDashboard::PutNumber("Angle", (double)m_imu.GetAngle());
+  frc::SmartDashboard::PutNumber("Theta", theta);
+  double power = hypot(horizontal, vertical);
+
+  double vertVector = sin(theta - (M_PI/4));
+  double horVector = cos(theta - (M_PI/4));
+  double max = MathMax(vertVector, horVector);
+
+  m_topLeft.Set(((power * horVector)/max)+pivot);
+  m_topRight.Set(((power * vertVector)/max)-pivot);
+  m_bottomLeft.Set(((power * vertVector)/max)+pivot);
+  m_bottomRight.Set(((power * horVector)/max)-pivot);
+
+  // if(power + fabs(pivot) > 1.0)
+  // {
+
+  // }
+}
+
+double Robot::MathMax(double a, double b)
+{
+  double returnValue;
+  if(fabs(a) > fabs(b))
+  {
+    returnValue = fabs(a);
+  }
+  else
+  {
+    returnValue = fabs(b);
+  }
+
+  return returnValue;
+}
 
 void Robot::DisabledInit() {}
 
