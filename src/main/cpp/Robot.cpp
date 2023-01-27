@@ -70,28 +70,34 @@ void Robot::TeleopPeriodic()
   double horizontal = 0.0;
   double pivot = 0.0;
 
+  // Get controller input
   vertical = -m_xBox.GetLeftY() * 0.1;
   horizontal = m_xBox.GetLeftX() * 0.1;
   pivot = m_xBox.GetRightX() * 0.1;
 
+  // Get the angle(in radians) of where the robot wants to go
+  // For robot orientation remove the imu
+  // For field orientation subtract the vector by the imu Angle as a radian
   double theta = atan2(vertical, horizontal) - ((double)m_imu.GetAngle() * (M_PI / 180.0));
+
   frc::SmartDashboard::PutNumber("Angle", (double)m_imu.GetAngle());
   frc::SmartDashboard::PutNumber("Theta", theta);
+  
+  // The power theoretical power the wheels will be going
   double power = hypot(horizontal, vertical);
 
+  // Get the vertical and horizontal vectors
   double vertVector = sin(theta - (M_PI/4));
   double horVector = cos(theta - (M_PI/4));
+
   double max = MathMax(vertVector, horVector);
 
+  // Set motor power
+  // Power * vector will set the correct power for the vectors
   m_topLeft.Set(((power * horVector)/max)+pivot);
   m_topRight.Set(((power * vertVector)/max)-pivot);
   m_bottomLeft.Set(((power * vertVector)/max)+pivot);
   m_bottomRight.Set(((power * horVector)/max)-pivot);
-
-  // if(power + fabs(pivot) > 1.0)
-  // {
-
-  // }
 }
 
 double Robot::MathMax(double a, double b)

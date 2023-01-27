@@ -38,12 +38,15 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
 
+  // Motors
   frc::Victor m_topLeft{1};
   frc::Victor m_topRight{0};
   frc::Victor m_bottomLeft{4};
   frc::Victor m_bottomRight{3};
 
+  // Controller
   frc::XboxController m_xBox{0};
 
+  // IMU / GYRO
   frc::ADIS16470_IMU m_imu;
 };
